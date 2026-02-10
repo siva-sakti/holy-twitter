@@ -384,3 +384,13 @@ All major decisions made. Ready to build.
 ---
 
 *Last updated: February 2025*
+
+---
+
+## Changelog
+
+### 2025-02-10
+- **Deployment**: Moved app from `holyscroll/` subdirectory to repository root for Vercel compatibility
+- **Configuration**: Added `vercel.json` to explicitly set Next.js framework preset
+- **Security**: Added admin email allowlist to restrict `/admin` dashboard access (only authorized emails can access)
+- **Infrastructure**: Firebase environment variables configured in Vercel for production deployment

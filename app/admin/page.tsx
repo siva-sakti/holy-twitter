@@ -12,6 +12,8 @@ import { getFigureById } from '@/lib/firebase/firestore';
 
 type AdminView = 'list' | 'detail' | 'add';
 
+const ADMIN_EMAILS = ['gargibala1@gmail.com'];
+
 export default function AdminPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -20,12 +22,14 @@ export default function AdminPage() {
   const [selectedFigure, setSelectedFigure] = useState<Figure | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Redirect if not logged in
+  const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email);
+
+  // Redirect if not logged in or not admin
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (!authLoading && (!user || !isAdmin)) {
       router.push('/');
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, isAdmin, router]);
 
   const handleSelectFigure = (figure: Figure) => {
     setSelectedFigure(figure);
@@ -75,8 +79,8 @@ export default function AdminPage() {
     );
   }
 
-  // Don't render if not logged in
-  if (!user) {
+  // Don't render if not logged in or not admin
+  if (!user || !isAdmin) {
     return null;
   }
 
