@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 import FigureProfile from '@/components/FigureProfile';
 import PostModal from '@/components/PostModal';
+import { shareQuote as shareQuoteUtil } from '@/lib/utils/share';
 import {
   getFigureById,
   getQuotesByFigure,
@@ -119,10 +120,14 @@ export default function FigurePage() {
     }
   };
 
-  // Handle share
-  const handleShare = (quote: QuoteWithFigure) => {
-    console.log('Share quote:', quote);
-  };
+  // Handle share - copy to clipboard or native share
+  const handleShare = useCallback(async (quote: QuoteWithFigure) => {
+    await shareQuoteUtil({
+      figureName: quote.figure.displayName,
+      quoteText: quote.text,
+      sourceCitation: quote.sourceCitation,
+    });
+  }, []);
 
   // Handle repost
   const handleRepost = (quote: QuoteWithFigure) => {

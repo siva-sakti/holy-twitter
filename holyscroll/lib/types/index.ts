@@ -2,6 +2,7 @@
 
 export interface Figure {
   id: string;
+  handle: string; // URL-friendly slug, e.g., "meister-eckhart"
   displayName: string;
   type: 'person' | 'text';
   bio: string;
@@ -16,6 +17,7 @@ export interface Quote {
   figureId: string;
   text: string;
   sourceCitation: string; // "Bhagavad Gita 2:47"
+  tags?: string[]; // Optional tags for categorization
   addedBy: string; // userId or "seed"
   createdAt: Date;
 }

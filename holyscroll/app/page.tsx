@@ -4,9 +4,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/AuthContext';
 import LoginScreen from '@/components/LoginScreen';
 import OnboardingScreen from '@/components/OnboardingScreen';
+import AppShell from '@/components/AppShell';
 import Feed from '@/components/Feed';
 import PostModal from '@/components/PostModal';
 import UserProfile from '@/components/UserProfile';
+import SavedQuotes from '@/components/SavedQuotes';
+import { shareQuote as shareQuoteUtil } from '@/lib/utils/share';
 import {
   getFigures,
   getQuotesForFeed,
@@ -19,6 +22,7 @@ import {
   updateUserProfile,
 } from '@/lib/firebase/firestore';
 import type { Figure, Quote, User, QuoteWithFigure } from '@/lib/types';
+import type { NavTab } from '@/components/Sidebar';
 
 type AppState = 'loading' | 'login' | 'onboarding' | 'feed';
 
@@ -26,13 +30,13 @@ export default function Home() {
   const { user, loading: authLoading } = useAuth();
 
   const [appState, setAppState] = useState<AppState>('loading');
+  const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [figures, setFigures] = useState<Figure[]>([]);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [userData, setUserData] = useState<User | null>(null);
   const [savedQuoteIds, setSavedQuoteIds] = useState<string[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [expandedQuote, setExpandedQuote] = useState<QuoteWithFigure | null>(null);
-  const [showProfile, setShowProfile] = useState(false);
 
   // Load figures on mount (needed for both onboarding and feed)
   useEffect(() => {
@@ -132,16 +136,18 @@ export default function Home() {
     }
   };
 
-  // Handle share (placeholder for now)
-  const handleShare = (quote: QuoteWithFigure) => {
-    console.log('Share quote:', quote);
-    // TODO: Implement share card generation
-  };
+  // Handle share - copy to clipboard or native share
+  const handleShare = useCallback(async (quote: QuoteWithFigure) => {
+    await shareQuoteUtil({
+      figureName: quote.figure.displayName,
+      quoteText: quote.text,
+      sourceCitation: quote.sourceCitation,
+    });
+  }, []);
 
   // Handle repost (placeholder for now)
   const handleRepost = (quote: QuoteWithFigure) => {
     console.log('Repost quote:', quote);
-    // TODO: Implement quote-tweet flow
   };
 
   // Handle expand - open modal
@@ -160,7 +166,7 @@ export default function Home() {
     await signOut();
   }, []);
 
-  // Handle reset onboarding (to test the flow)
+  // Handle reset onboarding
   const handleResetOnboarding = useCallback(async () => {
     if (!user) return;
     await updateUserFollowing(user.uid, []);
@@ -172,7 +178,6 @@ export default function Home() {
     async (updates: { displayName?: string; bio?: string }) => {
       if (!user) return;
       await updateUserProfile(user.uid, updates);
-      // Update local user data state
       if (userData) {
         setUserData({
           ...userData,
@@ -183,6 +188,9 @@ export default function Home() {
     },
     [user, userData]
   );
+
+  // Get original quote ID for save state
+  const getOriginalId = (id: string) => id.split('-batch')[0];
 
   // Loading spinner component
   const LoadingSpinner = () => (
@@ -213,6 +221,61 @@ export default function Home() {
     </div>
   );
 
+  // Render content based on active tab
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'home':
+        return (
+          <Feed
+            quotes={quotes}
+            figures={figures}
+            savedQuoteIds={savedQuoteIds}
+            onSave={handleSave}
+            onUnsave={handleUnsave}
+            onShare={handleShare}
+            onRepost={handleRepost}
+            onExpand={handleExpand}
+          />
+        );
+      case 'bookmarks':
+        return (
+          <SavedQuotes
+            savedQuoteIds={savedQuoteIds}
+            quotes={quotes}
+            figures={figures}
+            onSave={handleSave}
+            onUnsave={handleUnsave}
+            onExpand={handleExpand}
+            onShare={handleShare}
+            onRepost={handleRepost}
+          />
+        );
+      case 'profile':
+        return user ? (
+          <UserProfile
+            user={{
+              displayName: userData?.displayName || user.displayName || 'Anonymous',
+              email: user.email || '',
+              photoURL: user.photoURL || '',
+              bio: userData?.bio || '',
+            }}
+            savedQuoteIds={savedQuoteIds}
+            quotes={quotes}
+            figures={figures}
+            onClose={() => setActiveTab('home')}
+            onSave={handleSave}
+            onUnsave={handleUnsave}
+            onExpand={handleExpand}
+            onShare={handleShare}
+            onRepost={handleRepost}
+            onUpdateProfile={handleUpdateProfile}
+          />
+        ) : null;
+      default:
+        return null;
+    }
+  };
+
   // Render based on app state
   if (appState === 'loading' || dataLoading) {
     return <LoadingSpinner />;
@@ -233,27 +296,17 @@ export default function Home() {
   }
 
   if (appState === 'feed') {
-    // Get original quote ID for modal save state
-    const getOriginalId = (id: string) => id.split('-batch')[0];
-
     return (
-      <main className="min-h-screen bg-white dark:bg-black">
-        <div className="max-w-xl mx-auto border-x border-[#eff3f4] dark:border-[#2f3336] min-h-screen">
-          <Feed
-            quotes={quotes}
-            figures={figures}
-            savedQuoteIds={savedQuoteIds}
-            userPhotoUrl={user?.photoURL || undefined}
-            onSave={handleSave}
-            onUnsave={handleUnsave}
-            onShare={handleShare}
-            onRepost={handleRepost}
-            onExpand={handleExpand}
-            onSignOut={handleSignOut}
-            onResetOnboarding={handleResetOnboarding}
-            onShowProfile={() => setShowProfile(true)}
-          />
-        </div>
+      <>
+        <AppShell
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          userPhotoUrl={user?.photoURL || undefined}
+          userName={userData?.displayName || user?.displayName || 'User'}
+          onSignOut={handleSignOut}
+        >
+          {renderContent()}
+        </AppShell>
 
         {/* Post Modal */}
         {expandedQuote && (
@@ -273,29 +326,7 @@ export default function Home() {
             onShare={() => handleShare(expandedQuote)}
           />
         )}
-
-        {/* User Profile Modal */}
-        {showProfile && user && (
-          <UserProfile
-            user={{
-              displayName: userData?.displayName || user.displayName || 'Anonymous',
-              email: user.email || '',
-              photoURL: user.photoURL || '',
-              bio: userData?.bio || '',
-            }}
-            savedQuoteIds={savedQuoteIds}
-            quotes={quotes}
-            figures={figures}
-            onClose={() => setShowProfile(false)}
-            onSave={handleSave}
-            onUnsave={handleUnsave}
-            onExpand={handleExpand}
-            onShare={handleShare}
-            onRepost={handleRepost}
-            onUpdateProfile={handleUpdateProfile}
-          />
-        )}
-      </main>
+      </>
     );
   }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { FaRegComment, FaRetweet, FaRegHeart, FaHeart } from 'react-icons/fa';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { FiShare } from 'react-icons/fi';
 
 interface PostProps {
@@ -32,7 +32,6 @@ export default function Post({
   onSave,
   onExpand,
   onShare,
-  onRepost,
 }: PostProps) {
   const router = useRouter();
   const isLongPost = quote.text.length > MAX_PREVIEW_LENGTH;
@@ -60,13 +59,13 @@ export default function Post({
   return (
     <article
       onClick={handlePostClick}
-      className="flex gap-3 px-4 py-3 border-b border-[#eff3f4] dark:border-[#2f3336] hover:bg-[#f7f9f9] dark:hover:bg-[#080808] cursor-pointer transition-colors"
+      className="flex gap-3 px-4 py-3 border-b border-[#eff3f4] dark:border-[#2f3336] hover:bg-[#00000008] dark:hover:bg-[#ffffff08] cursor-pointer transition-colors"
     >
       {/* Profile Picture - exactly 40px like X */}
       <div className="flex-shrink-0 figure-link">
         <button
           onClick={handleFigureClick}
-          className={`block ${figure.id ? 'cursor-pointer hover:opacity-80' : ''}`}
+          className={`block ${figure.id ? 'cursor-pointer hover:opacity-90' : ''}`}
           disabled={!figure.id}
         >
           <img
@@ -79,7 +78,7 @@ export default function Post({
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        {/* Header Row */}
+        {/* Header Row - tighter spacing */}
         <div className="flex items-center gap-1 text-[15px] leading-5">
           <button
             onClick={handleFigureClick}
@@ -88,9 +87,7 @@ export default function Post({
           >
             {figure.displayName}
           </button>
-          <span className="text-[#d4af37] text-[12px]" title="Verified Saint">
-            ✦
-          </span>
+          <span className="text-[#d4af37] text-[11px]">✦</span>
           <span className="text-[#536471] dark:text-[#71767b]">·</span>
           <span className="text-[#536471] dark:text-[#71767b] truncate">{quote.sourceCitation}</span>
           <span className="text-[#536471] dark:text-[#71767b]">·</span>
@@ -116,32 +113,8 @@ export default function Post({
           )}
         </div>
 
-        {/* Action Buttons - X style */}
-        <div className="action-buttons flex items-center justify-between mt-3 max-w-[425px] -ml-2">
-          {/* Comment (decorative) */}
-          <button
-            className="group flex items-center"
-            onClick={(e) => e.stopPropagation()}
-            disabled
-          >
-            <div className="p-2 rounded-full group-hover:bg-[#1d9bf01a] transition-colors">
-              <FaRegComment className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]" />
-            </div>
-          </button>
-
-          {/* Repost */}
-          <button
-            className="group flex items-center"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRepost();
-            }}
-          >
-            <div className="p-2 rounded-full group-hover:bg-[#00ba7c1a] transition-colors">
-              <FaRetweet className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#00ba7c]" />
-            </div>
-          </button>
-
+        {/* Action Buttons - minimal, just save and share */}
+        <div className="action-buttons flex items-center gap-0 mt-3 -ml-2">
           {/* Save/Heart */}
           <button
             className="group flex items-center"
