@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { FiShare } from 'react-icons/fi';
@@ -38,6 +39,9 @@ export default function Post({
   onShare,
 }: PostProps) {
   const router = useRouter();
+  const [heartAnimating, setHeartAnimating] = useState(false);
+  const [bookmarkAnimating, setBookmarkAnimating] = useState(false);
+  const [shareAnimating, setShareAnimating] = useState(false);
   const isLongPost = quote.text.length > MAX_PREVIEW_LENGTH;
   const displayText = isLongPost
     ? quote.text.slice(0, MAX_PREVIEW_LENGTH).trim()
@@ -124,18 +128,26 @@ export default function Post({
             className="group flex items-center flex-1"
             onClick={(e) => {
               e.stopPropagation();
+              if (!isLiked) {
+                setHeartAnimating(true);
+                setTimeout(() => setHeartAnimating(false), 300);
+              }
               onLike();
             }}
           >
             <div
-              className={`p-2 rounded-full transition-colors ${
+              className={`p-2 rounded-full transition-colors active:scale-90 ${
                 isLiked ? '' : 'group-hover:bg-[#f918801a]'
               }`}
             >
               {isLiked ? (
-                <FaHeart className="w-[18px] h-[18px] text-[#f91880]" />
+                <FaHeart
+                  className={`w-[18px] h-[18px] text-[#f91880] transition-transform ${
+                    heartAnimating ? 'animate-heart-pop' : ''
+                  }`}
+                />
               ) : (
-                <FaRegHeart className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#f91880]" />
+                <FaRegHeart className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#f91880] transition-colors" />
               )}
             </div>
           </button>
@@ -145,18 +157,24 @@ export default function Post({
             className="group flex items-center flex-1 justify-center"
             onClick={(e) => {
               e.stopPropagation();
+              setBookmarkAnimating(true);
+              setTimeout(() => setBookmarkAnimating(false), 200);
               onBookmark();
             }}
           >
             <div
-              className={`p-2 rounded-full transition-colors ${
+              className={`p-2 rounded-full transition-colors active:scale-90 ${
                 isBookmarked ? '' : 'group-hover:bg-[#1d9bf01a]'
               }`}
             >
               {isBookmarked ? (
-                <IoBookmark className="w-[18px] h-[18px] text-[#1d9bf0]" />
+                <IoBookmark
+                  className={`w-[18px] h-[18px] text-[#1d9bf0] transition-transform ${
+                    bookmarkAnimating ? 'animate-bookmark-bounce' : ''
+                  }`}
+                />
               ) : (
-                <IoBookmarkOutline className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]" />
+                <IoBookmarkOutline className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0] transition-colors" />
               )}
             </div>
           </button>
@@ -166,11 +184,17 @@ export default function Post({
             className="group flex items-center flex-1 justify-end"
             onClick={(e) => {
               e.stopPropagation();
+              setShareAnimating(true);
+              setTimeout(() => setShareAnimating(false), 200);
               onShare();
             }}
           >
-            <div className="p-2 rounded-full group-hover:bg-[#00ba7c1a] transition-colors">
-              <FiShare className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#00ba7c]" />
+            <div className="p-2 rounded-full group-hover:bg-[#00ba7c1a] transition-colors active:scale-90">
+              <FiShare
+                className={`w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#00ba7c] transition-transform ${
+                  shareAnimating ? 'animate-share-pop' : ''
+                }`}
+              />
             </div>
           </button>
         </div>

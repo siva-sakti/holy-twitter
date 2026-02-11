@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { FiShare } from 'react-icons/fi';
@@ -44,6 +44,9 @@ export default function PostModal({
   onShare,
 }: PostModalProps) {
   const router = useRouter();
+  const [heartAnimating, setHeartAnimating] = useState(false);
+  const [bookmarkAnimating, setBookmarkAnimating] = useState(false);
+  const [shareAnimating, setShareAnimating] = useState(false);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -141,14 +144,20 @@ export default function PostModal({
         <div className="flex items-center justify-around px-4 py-3 border-t border-[#eff3f4] dark:border-[#2f3336] bg-white dark:bg-black">
           {/* Like/Heart */}
           <button
-            onClick={onLike}
+            onClick={() => {
+              if (!isLiked) {
+                setHeartAnimating(true);
+                setTimeout(() => setHeartAnimating(false), 300);
+              }
+              onLike();
+            }}
             className="group flex items-center gap-1"
           >
-            <div className={`p-2 rounded-full transition-colors ${isLiked ? '' : 'group-hover:bg-[#f918801a]'}`}>
+            <div className={`p-2 rounded-full transition-colors active:scale-90 ${isLiked ? '' : 'group-hover:bg-[#f918801a]'}`}>
               {isLiked ? (
-                <FaHeart className="w-5 h-5 text-[#f91880]" />
+                <FaHeart className={`w-5 h-5 text-[#f91880] ${heartAnimating ? 'animate-heart-pop' : ''}`} />
               ) : (
-                <FaRegHeart className="w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#f91880]" />
+                <FaRegHeart className="w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#f91880] transition-colors" />
               )}
             </div>
             <span className={`text-[13px] ${isLiked ? 'text-[#f91880]' : 'text-[#536471] dark:text-[#71767b] group-hover:text-[#f91880]'}`}>
@@ -158,14 +167,18 @@ export default function PostModal({
 
           {/* Bookmark */}
           <button
-            onClick={onBookmark}
+            onClick={() => {
+              setBookmarkAnimating(true);
+              setTimeout(() => setBookmarkAnimating(false), 200);
+              onBookmark();
+            }}
             className="group flex items-center gap-1"
           >
-            <div className={`p-2 rounded-full transition-colors ${isBookmarked ? '' : 'group-hover:bg-[#1d9bf01a]'}`}>
+            <div className={`p-2 rounded-full transition-colors active:scale-90 ${isBookmarked ? '' : 'group-hover:bg-[#1d9bf01a]'}`}>
               {isBookmarked ? (
-                <IoBookmark className="w-5 h-5 text-[#1d9bf0]" />
+                <IoBookmark className={`w-5 h-5 text-[#1d9bf0] ${bookmarkAnimating ? 'animate-bookmark-bounce' : ''}`} />
               ) : (
-                <IoBookmarkOutline className="w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]" />
+                <IoBookmarkOutline className="w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0] transition-colors" />
               )}
             </div>
             <span className={`text-[13px] ${isBookmarked ? 'text-[#1d9bf0]' : 'text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]'}`}>
@@ -175,11 +188,15 @@ export default function PostModal({
 
           {/* Share */}
           <button
-            onClick={onShare}
+            onClick={() => {
+              setShareAnimating(true);
+              setTimeout(() => setShareAnimating(false), 200);
+              onShare();
+            }}
             className="group flex items-center gap-1"
           >
-            <div className="p-2 rounded-full group-hover:bg-[#00ba7c1a] transition-colors">
-              <FiShare className="w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#00ba7c]" />
+            <div className="p-2 rounded-full group-hover:bg-[#00ba7c1a] transition-colors active:scale-90">
+              <FiShare className={`w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#00ba7c] ${shareAnimating ? 'animate-share-pop' : ''}`} />
             </div>
             <span className="text-[13px] text-[#536471] dark:text-[#71767b] group-hover:text-[#00ba7c]">
               Share
