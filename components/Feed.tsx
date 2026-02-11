@@ -9,11 +9,12 @@ import type { Quote, Figure, QuoteWithFigure } from '@/lib/types';
 interface FeedProps {
   quotes: Quote[];
   figures: Figure[];
+  likedQuoteIds: string[];
   savedQuoteIds: string[];
-  onSave: (quoteId: string) => void;
-  onUnsave: (quoteId: string) => void;
+  onLike: (quoteId: string) => void;
+  onUnlike: (quoteId: string) => void;
+  onBookmark: (quoteId: string) => void;
   onShare: (quote: QuoteWithFigure) => void;
-  onRepost: (quote: QuoteWithFigure) => void;
   onExpand: (quote: QuoteWithFigure) => void;
 }
 
@@ -38,11 +39,12 @@ function enrichQuotesWithFigures(
 export default function Feed({
   quotes,
   figures,
+  likedQuoteIds,
   savedQuoteIds,
-  onSave,
-  onUnsave,
+  onLike,
+  onUnlike,
+  onBookmark,
   onShare,
-  onRepost,
   onExpand,
 }: FeedProps) {
   const [displayedQuotes, setDisplayedQuotes] = useState<QuoteWithFigure[]>([]);
@@ -173,17 +175,18 @@ export default function Feed({
                 sourceCitation: quote.sourceCitation,
               }}
               timestamp={quote.fakeTimestamp}
-              isSaved={savedQuoteIds.includes(originalId)}
-              onSave={() => {
-                if (savedQuoteIds.includes(originalId)) {
-                  onUnsave(originalId);
+              isLiked={likedQuoteIds.includes(originalId)}
+              isBookmarked={savedQuoteIds.includes(originalId)}
+              onLike={() => {
+                if (likedQuoteIds.includes(originalId)) {
+                  onUnlike(originalId);
                 } else {
-                  onSave(originalId);
+                  onLike(originalId);
                 }
               }}
+              onBookmark={() => onBookmark(originalId)}
               onExpand={() => onExpand(quote)}
               onShare={() => onShare(quote)}
-              onRepost={() => onRepost(quote)}
             />
           );
         })}

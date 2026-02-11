@@ -9,22 +9,36 @@ import Feed from '@/components/Feed';
 import PostModal from '@/components/PostModal';
 import UserProfile from '@/components/UserProfile';
 import SavedQuotes from '@/components/SavedQuotes';
+import ListPickerModal from '@/components/ListPickerModal';
+import CreateListModal from '@/components/CreateListModal';
 import { shareQuote as shareQuoteUtil } from '@/lib/utils/share';
 import {
   getFigures,
   getQuotesForFeed,
   getUserData,
   createUserIfNotExists,
-  getUserSavedQuotes,
-  saveQuote,
+  getUserSavedQuotesWithData,
+  getUserLikedQuotes,
+  getUserLists,
+  likeQuote,
+  unlikeQuote,
+  saveQuoteToList,
   unsaveQuote,
+  createList,
+  deleteList,
   updateUserFollowing,
   updateUserProfile,
 } from '@/lib/firebase/firestore';
+import type { ListData } from '@/lib/firebase/firestore';
 import type { Figure, Quote, User, QuoteWithFigure } from '@/lib/types';
 import type { NavTab } from '@/components/Sidebar';
 
 type AppState = 'loading' | 'login' | 'onboarding' | 'feed';
+
+interface SavedQuoteData {
+  quoteId: string;
+  listId: string | null;
+}
 
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
@@ -34,11 +48,28 @@ export default function Home() {
   const [figures, setFigures] = useState<Figure[]>([]);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [userData, setUserData] = useState<User | null>(null);
-  const [savedQuoteIds, setSavedQuoteIds] = useState<string[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [expandedQuote, setExpandedQuote] = useState<QuoteWithFigure | null>(null);
 
-  // Load figures on mount (needed for both onboarding and feed)
+  // Like state
+  const [likedQuoteIds, setLikedQuoteIds] = useState<string[]>([]);
+  const [likingQuoteIds, setLikingQuoteIds] = useState<Set<string>>(new Set());
+
+  // Bookmark/Save state
+  const [savedQuotes, setSavedQuotes] = useState<SavedQuoteData[]>([]);
+  const [savingQuoteIds, setSavingQuoteIds] = useState<Set<string>>(new Set());
+
+  // Lists state
+  const [lists, setLists] = useState<ListData[]>([]);
+
+  // Modal state
+  const [bookmarkingQuoteId, setBookmarkingQuoteId] = useState<string | null>(null);
+  const [showCreateListModal, setShowCreateListModal] = useState(false);
+
+  // Derived: array of saved quote IDs for quick lookup
+  const savedQuoteIds = savedQuotes.map((sq) => sq.quoteId);
+
+  // Load figures on mount
   useEffect(() => {
     getFigures()
       .then(setFigures)
@@ -57,7 +88,6 @@ export default function Home() {
       return;
     }
 
-    // User is authenticated, check if they have data
     setDataLoading(true);
     createUserIfNotExists(user.uid, user.email, user.displayName, user.photoURL)
       .then((userData) => {
@@ -67,7 +97,6 @@ export default function Home() {
           setAppState('onboarding');
           setDataLoading(false);
         } else {
-          // User has following list, load feed data
           loadFeedData(user.uid, userData.following);
         }
       })
@@ -77,16 +106,20 @@ export default function Home() {
       });
   }, [user, authLoading]);
 
-  // Load feed data
+  // Load feed data including likes and lists
   const loadFeedData = async (uid: string, following: string[]) => {
     try {
-      const [quotesData, savedIds] = await Promise.all([
+      const [quotesData, savedData, likedIds, userLists] = await Promise.all([
         getQuotesForFeed(following),
-        getUserSavedQuotes(uid),
+        getUserSavedQuotesWithData(uid),
+        getUserLikedQuotes(uid),
+        getUserLists(uid),
       ]);
 
       setQuotes(quotesData);
-      setSavedQuoteIds(savedIds);
+      setSavedQuotes(savedData.map((sq) => ({ quoteId: sq.quoteId, listId: sq.listId ?? null })));
+      setLikedQuoteIds(likedIds);
+      setLists(userLists);
       setAppState('feed');
     } catch (err) {
       console.error('Error loading feed data:', err);
@@ -112,21 +145,66 @@ export default function Home() {
     }
   }, [user]);
 
-  // Track in-progress saves to prevent double-clicks
-  const [savingQuoteIds, setSavingQuoteIds] = useState<Set<string>>(new Set());
+  // ============ LIKE HANDLERS ============
 
-  // Handle save quote
-  const handleSave = async (quoteId: string) => {
+  const handleLike = async (quoteId: string) => {
     if (!user) return;
-    // Prevent duplicate saves
-    if (savedQuoteIds.includes(quoteId) || savingQuoteIds.has(quoteId)) return;
+    if (likedQuoteIds.includes(quoteId) || likingQuoteIds.has(quoteId)) return;
+
+    setLikingQuoteIds((prev) => new Set(prev).add(quoteId));
+    try {
+      await likeQuote(user.uid, quoteId);
+      setLikedQuoteIds((prev) => (prev.includes(quoteId) ? prev : [...prev, quoteId]));
+    } catch (err) {
+      console.error('Error liking quote:', err);
+    } finally {
+      setLikingQuoteIds((prev) => {
+        const next = new Set(prev);
+        next.delete(quoteId);
+        return next;
+      });
+    }
+  };
+
+  const handleUnlike = async (quoteId: string) => {
+    if (!user) return;
+    if (!likedQuoteIds.includes(quoteId) || likingQuoteIds.has(quoteId)) return;
+
+    setLikingQuoteIds((prev) => new Set(prev).add(quoteId));
+    try {
+      await unlikeQuote(user.uid, quoteId);
+      setLikedQuoteIds((prev) => prev.filter((id) => id !== quoteId));
+    } catch (err) {
+      console.error('Error unliking quote:', err);
+    } finally {
+      setLikingQuoteIds((prev) => {
+        const next = new Set(prev);
+        next.delete(quoteId);
+        return next;
+      });
+    }
+  };
+
+  // ============ BOOKMARK HANDLERS ============
+
+  const handleBookmarkClick = (quoteId: string) => {
+    setBookmarkingQuoteId(quoteId);
+  };
+
+  const handleSaveToList = async (quoteId: string, listId: string | null) => {
+    if (!user) return;
+    if (savingQuoteIds.has(quoteId)) return;
 
     setSavingQuoteIds((prev) => new Set(prev).add(quoteId));
     try {
-      await saveQuote(user.uid, quoteId);
-      setSavedQuoteIds((prev) =>
-        prev.includes(quoteId) ? prev : [...prev, quoteId]
-      );
+      await saveQuoteToList(user.uid, quoteId, listId);
+      setSavedQuotes((prev) => {
+        const existing = prev.find((sq) => sq.quoteId === quoteId);
+        if (existing) {
+          return prev.map((sq) => (sq.quoteId === quoteId ? { ...sq, listId } : sq));
+        }
+        return [...prev, { quoteId, listId }];
+      });
     } catch (err) {
       console.error('Error saving quote:', err);
     } finally {
@@ -138,18 +216,16 @@ export default function Home() {
     }
   };
 
-  // Handle unsave quote
-  const handleUnsave = async (quoteId: string) => {
+  const handleRemoveBookmark = async (quoteId: string) => {
     if (!user) return;
-    // Prevent duplicate unsaves
-    if (!savedQuoteIds.includes(quoteId) || savingQuoteIds.has(quoteId)) return;
+    if (savingQuoteIds.has(quoteId)) return;
 
     setSavingQuoteIds((prev) => new Set(prev).add(quoteId));
     try {
       await unsaveQuote(user.uid, quoteId);
-      setSavedQuoteIds((prev) => prev.filter((id) => id !== quoteId));
+      setSavedQuotes((prev) => prev.filter((sq) => sq.quoteId !== quoteId));
     } catch (err) {
-      console.error('Error unsaving quote:', err);
+      console.error('Error removing bookmark:', err);
     } finally {
       setSavingQuoteIds((prev) => {
         const next = new Set(prev);
@@ -159,7 +235,36 @@ export default function Home() {
     }
   };
 
-  // Handle share - copy to clipboard or native share
+  // ============ LIST HANDLERS ============
+
+  const handleCreateList = async (name: string) => {
+    if (!user) return;
+
+    try {
+      const listId = await createList(user.uid, name);
+      setLists((prev) => [...prev, { id: listId, name, createdAt: new Date() }]);
+    } catch (err) {
+      console.error('Error creating list:', err);
+    }
+  };
+
+  const handleDeleteList = async (listId: string) => {
+    if (!user) return;
+
+    try {
+      await deleteList(user.uid, listId);
+      setLists((prev) => prev.filter((l) => l.id !== listId));
+      // Update saved quotes that were in this list
+      setSavedQuotes((prev) =>
+        prev.map((sq) => (sq.listId === listId ? { ...sq, listId: null } : sq))
+      );
+    } catch (err) {
+      console.error('Error deleting list:', err);
+    }
+  };
+
+  // ============ OTHER HANDLERS ============
+
   const handleShare = useCallback(async (quote: QuoteWithFigure) => {
     await shareQuoteUtil({
       figureName: quote.figure.displayName,
@@ -168,35 +273,19 @@ export default function Home() {
     });
   }, []);
 
-  // Handle repost (placeholder for now)
-  const handleRepost = (quote: QuoteWithFigure) => {
-    console.log('Repost quote:', quote);
-  };
-
-  // Handle expand - open modal
   const handleExpand = (quote: QuoteWithFigure) => {
     setExpandedQuote(quote);
   };
 
-  // Handle close modal
   const handleCloseModal = () => {
     setExpandedQuote(null);
   };
 
-  // Handle sign out
   const handleSignOut = useCallback(async () => {
     const { signOut } = await import('@/lib/firebase/auth');
     await signOut();
   }, []);
 
-  // Handle reset onboarding
-  const handleResetOnboarding = useCallback(async () => {
-    if (!user) return;
-    await updateUserFollowing(user.uid, []);
-    setAppState('onboarding');
-  }, [user]);
-
-  // Handle update profile
   const handleUpdateProfile = useCallback(
     async (updates: { displayName?: string; bio?: string }) => {
       if (!user) return;
@@ -212,8 +301,13 @@ export default function Home() {
     [user, userData]
   );
 
-  // Get original quote ID for save state
   const getOriginalId = (id: string) => id.split('-batch')[0];
+
+  // Get current list ID for a quote
+  const getQuoteListId = (quoteId: string): string | null | undefined => {
+    const saved = savedQuotes.find((sq) => sq.quoteId === quoteId);
+    return saved ? saved.listId : undefined;
+  };
 
   // Loading spinner component
   const LoadingSpinner = () => (
@@ -252,25 +346,30 @@ export default function Home() {
           <Feed
             quotes={quotes}
             figures={figures}
+            likedQuoteIds={likedQuoteIds}
             savedQuoteIds={savedQuoteIds}
-            onSave={handleSave}
-            onUnsave={handleUnsave}
+            onLike={handleLike}
+            onUnlike={handleUnlike}
+            onBookmark={handleBookmarkClick}
             onShare={handleShare}
-            onRepost={handleRepost}
             onExpand={handleExpand}
           />
         );
       case 'bookmarks':
         return (
           <SavedQuotes
-            savedQuoteIds={savedQuoteIds}
+            savedQuotes={savedQuotes}
+            likedQuoteIds={likedQuoteIds}
+            lists={lists}
             quotes={quotes}
             figures={figures}
-            onSave={handleSave}
-            onUnsave={handleUnsave}
+            onLike={handleLike}
+            onUnlike={handleUnlike}
+            onBookmark={handleBookmarkClick}
             onExpand={handleExpand}
             onShare={handleShare}
-            onRepost={handleRepost}
+            onCreateList={() => setShowCreateListModal(true)}
+            onDeleteList={handleDeleteList}
           />
         );
       case 'profile':
@@ -283,14 +382,15 @@ export default function Home() {
               bio: userData?.bio || '',
             }}
             savedQuoteIds={savedQuoteIds}
+            likedQuoteIds={likedQuoteIds}
             quotes={quotes}
             figures={figures}
             onClose={() => setActiveTab('home')}
-            onSave={handleSave}
-            onUnsave={handleUnsave}
+            onLike={handleLike}
+            onUnlike={handleUnlike}
+            onBookmark={handleBookmarkClick}
             onExpand={handleExpand}
             onShare={handleShare}
-            onRepost={handleRepost}
             onUpdateProfile={handleUpdateProfile}
           />
         ) : null;
@@ -335,18 +435,40 @@ export default function Home() {
         {expandedQuote && (
           <PostModal
             quote={expandedQuote}
-            isSaved={savedQuoteIds.includes(getOriginalId(expandedQuote.id))}
+            isLiked={likedQuoteIds.includes(getOriginalId(expandedQuote.id))}
+            isBookmarked={savedQuoteIds.includes(getOriginalId(expandedQuote.id))}
             onClose={handleCloseModal}
-            onSave={() => {
+            onLike={() => {
               const originalId = getOriginalId(expandedQuote.id);
-              if (savedQuoteIds.includes(originalId)) {
-                handleUnsave(originalId);
+              if (likedQuoteIds.includes(originalId)) {
+                handleUnlike(originalId);
               } else {
-                handleSave(originalId);
+                handleLike(originalId);
               }
             }}
-            onRepost={() => handleRepost(expandedQuote)}
+            onBookmark={() => handleBookmarkClick(getOriginalId(expandedQuote.id))}
             onShare={() => handleShare(expandedQuote)}
+          />
+        )}
+
+        {/* List Picker Modal */}
+        {bookmarkingQuoteId && (
+          <ListPickerModal
+            lists={lists}
+            currentListId={getQuoteListId(bookmarkingQuoteId)}
+            isBookmarked={savedQuoteIds.includes(bookmarkingQuoteId)}
+            onClose={() => setBookmarkingQuoteId(null)}
+            onSaveToList={(listId) => handleSaveToList(bookmarkingQuoteId, listId)}
+            onRemoveBookmark={() => handleRemoveBookmark(bookmarkingQuoteId)}
+            onCreateList={() => setShowCreateListModal(true)}
+          />
+        )}
+
+        {/* Create List Modal */}
+        {showCreateListModal && (
+          <CreateListModal
+            onClose={() => setShowCreateListModal(false)}
+            onCreate={handleCreateList}
           />
         )}
       </>

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { FiShare } from 'react-icons/fi';
+import { IoBookmarkOutline, IoBookmark } from 'react-icons/io5';
 
 interface PostProps {
   figure: {
@@ -15,11 +16,12 @@ interface PostProps {
     sourceCitation: string;
   };
   timestamp: string;
-  isSaved: boolean;
-  onSave: () => void;
+  isLiked: boolean;
+  isBookmarked: boolean;
+  onLike: () => void;
+  onBookmark: () => void;
   onExpand: () => void;
   onShare: () => void;
-  onRepost: () => void;
 }
 
 const MAX_PREVIEW_LENGTH = 280;
@@ -28,8 +30,10 @@ export default function Post({
   figure,
   quote,
   timestamp,
-  isSaved,
-  onSave,
+  isLiked,
+  isBookmarked,
+  onLike,
+  onBookmark,
   onExpand,
   onShare,
 }: PostProps) {
@@ -113,22 +117,22 @@ export default function Post({
           )}
         </div>
 
-        {/* Action Buttons - heart left, share right, spread across */}
-        <div className="action-buttons flex items-center justify-between mt-3 -mx-2">
-          {/* Save/Heart */}
+        {/* Action Buttons - 3 buttons evenly spaced */}
+        <div className="action-buttons flex items-center mt-3 max-w-[300px]">
+          {/* Like/Heart */}
           <button
-            className="group flex items-center"
+            className="group flex items-center flex-1"
             onClick={(e) => {
               e.stopPropagation();
-              onSave();
+              onLike();
             }}
           >
             <div
               className={`p-2 rounded-full transition-colors ${
-                isSaved ? '' : 'group-hover:bg-[#f918801a]'
+                isLiked ? '' : 'group-hover:bg-[#f918801a]'
               }`}
             >
-              {isSaved ? (
+              {isLiked ? (
                 <FaHeart className="w-[18px] h-[18px] text-[#f91880]" />
               ) : (
                 <FaRegHeart className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#f91880]" />
@@ -136,16 +140,37 @@ export default function Post({
             </div>
           </button>
 
+          {/* Bookmark */}
+          <button
+            className="group flex items-center flex-1 justify-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              onBookmark();
+            }}
+          >
+            <div
+              className={`p-2 rounded-full transition-colors ${
+                isBookmarked ? '' : 'group-hover:bg-[#1d9bf01a]'
+              }`}
+            >
+              {isBookmarked ? (
+                <IoBookmark className="w-[18px] h-[18px] text-[#1d9bf0]" />
+              ) : (
+                <IoBookmarkOutline className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]" />
+              )}
+            </div>
+          </button>
+
           {/* Share */}
           <button
-            className="group flex items-center"
+            className="group flex items-center flex-1 justify-end"
             onClick={(e) => {
               e.stopPropagation();
               onShare();
             }}
           >
-            <div className="p-2 rounded-full group-hover:bg-[#1d9bf01a] transition-colors">
-              <FiShare className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]" />
+            <div className="p-2 rounded-full group-hover:bg-[#00ba7c1a] transition-colors">
+              <FiShare className="w-[18px] h-[18px] text-[#536471] dark:text-[#71767b] group-hover:text-[#00ba7c]" />
             </div>
           </button>
         </div>

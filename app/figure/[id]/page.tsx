@@ -11,8 +11,11 @@ import {
   getQuotesByFigure,
   getUserData,
   getUserSavedQuotes,
+  getUserLikedQuotes,
   saveQuote,
   unsaveQuote,
+  likeQuote,
+  unlikeQuote,
   followFigure,
   unfollowFigure,
 } from '@/lib/firebase/firestore';
@@ -28,6 +31,7 @@ export default function FigurePage() {
   const [figure, setFigure] = useState<Figure | null>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [savedQuoteIds, setSavedQuoteIds] = useState<string[]>([]);
+  const [likedQuoteIds, setLikedQuoteIds] = useState<string[]>([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [expandedQuote, setExpandedQuote] = useState<QuoteWithFigure | null>(null);
@@ -51,15 +55,17 @@ export default function FigurePage() {
 
         // Load user-specific data if logged in
         if (user) {
-          const [userData, savedIds] = await Promise.all([
+          const [userData, savedIds, likedIds] = await Promise.all([
             getUserData(user.uid),
             getUserSavedQuotes(user.uid),
+            getUserLikedQuotes(user.uid),
           ]);
 
           if (userData) {
             setIsFollowing(userData.following.includes(figureId));
           }
           setSavedQuoteIds(savedIds);
+          setLikedQuoteIds(likedIds);
         }
       } catch (err) {
         console.error('Error loading figure:', err);
@@ -98,25 +104,41 @@ export default function FigurePage() {
     }
   };
 
-  // Handle save quote
-  const handleSave = async (quoteId: string) => {
+  // Handle like quote
+  const handleLike = async (quoteId: string) => {
     if (!user) return;
     try {
-      await saveQuote(user.uid, quoteId);
-      setSavedQuoteIds((prev) => [...prev, quoteId]);
+      await likeQuote(user.uid, quoteId);
+      setLikedQuoteIds((prev) => [...prev, quoteId]);
     } catch (err) {
-      console.error('Error saving quote:', err);
+      console.error('Error liking quote:', err);
     }
   };
 
-  // Handle unsave quote
-  const handleUnsave = async (quoteId: string) => {
+  // Handle unlike quote
+  const handleUnlike = async (quoteId: string) => {
     if (!user) return;
     try {
-      await unsaveQuote(user.uid, quoteId);
-      setSavedQuoteIds((prev) => prev.filter((id) => id !== quoteId));
+      await unlikeQuote(user.uid, quoteId);
+      setLikedQuoteIds((prev) => prev.filter((id) => id !== quoteId));
     } catch (err) {
-      console.error('Error unsaving quote:', err);
+      console.error('Error unliking quote:', err);
+    }
+  };
+
+  // Handle bookmark quote
+  const handleBookmark = async (quoteId: string) => {
+    if (!user) return;
+    try {
+      if (savedQuoteIds.includes(quoteId)) {
+        await unsaveQuote(user.uid, quoteId);
+        setSavedQuoteIds((prev) => prev.filter((id) => id !== quoteId));
+      } else {
+        await saveQuote(user.uid, quoteId);
+        setSavedQuoteIds((prev) => [...prev, quoteId]);
+      }
+    } catch (err) {
+      console.error('Error toggling bookmark:', err);
     }
   };
 
@@ -128,11 +150,6 @@ export default function FigurePage() {
       sourceCitation: quote.sourceCitation,
     });
   }, []);
-
-  // Handle repost
-  const handleRepost = (quote: QuoteWithFigure) => {
-    console.log('Repost quote:', quote);
-  };
 
   // Handle expand
   const handleExpand = (quote: QuoteWithFigure) => {
@@ -184,14 +201,15 @@ export default function FigurePage() {
           figure={figure}
           quotes={enrichedQuotes}
           savedQuoteIds={savedQuoteIds}
+          likedQuoteIds={likedQuoteIds}
           isFollowing={isFollowing}
           onBack={handleBack}
           onToggleFollow={handleToggleFollow}
-          onSave={handleSave}
-          onUnsave={handleUnsave}
+          onLike={handleLike}
+          onUnlike={handleUnlike}
+          onBookmark={handleBookmark}
           onExpand={handleExpand}
           onShare={handleShare}
-          onRepost={handleRepost}
         />
       </div>
 
@@ -199,16 +217,17 @@ export default function FigurePage() {
       {expandedQuote && (
         <PostModal
           quote={expandedQuote}
-          isSaved={savedQuoteIds.includes(expandedQuote.id)}
+          isLiked={likedQuoteIds.includes(expandedQuote.id)}
+          isBookmarked={savedQuoteIds.includes(expandedQuote.id)}
           onClose={() => setExpandedQuote(null)}
-          onSave={() => {
-            if (savedQuoteIds.includes(expandedQuote.id)) {
-              handleUnsave(expandedQuote.id);
+          onLike={() => {
+            if (likedQuoteIds.includes(expandedQuote.id)) {
+              handleUnlike(expandedQuote.id);
             } else {
-              handleSave(expandedQuote.id);
+              handleLike(expandedQuote.id);
             }
           }}
-          onRepost={() => handleRepost(expandedQuote)}
+          onBookmark={() => handleBookmark(expandedQuote.id)}
           onShare={() => handleShare(expandedQuote)}
         />
       )}

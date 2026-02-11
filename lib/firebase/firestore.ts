@@ -325,3 +325,107 @@ export async function getQuoteCountsForFigures(
 
   return counts;
 }
+
+// ============ LIKED QUOTES ============
+
+export async function likeQuote(uid: string, quoteId: string): Promise<void> {
+  const likedQuoteRef = doc(db, 'users', uid, 'likedQuotes', quoteId);
+  await setDoc(likedQuoteRef, {
+    quoteId,
+    likedAt: Timestamp.now(),
+  });
+}
+
+export async function unlikeQuote(uid: string, quoteId: string): Promise<void> {
+  const likedQuoteRef = doc(db, 'users', uid, 'likedQuotes', quoteId);
+  await deleteDoc(likedQuoteRef);
+}
+
+export async function getUserLikedQuotes(uid: string): Promise<string[]> {
+  const likedQuotesRef = collection(db, 'users', uid, 'likedQuotes');
+  const snapshot = await getDocs(likedQuotesRef);
+  return snapshot.docs.map((doc) => doc.data().quoteId);
+}
+
+// ============ LISTS ============
+
+export interface ListData {
+  id: string;
+  name: string;
+  createdAt: Date;
+}
+
+export async function createList(uid: string, name: string): Promise<string> {
+  const listsRef = collection(db, 'users', uid, 'lists');
+  const docRef = await addDoc(listsRef, {
+    name,
+    createdAt: Timestamp.now(),
+  });
+  return docRef.id;
+}
+
+export async function deleteList(uid: string, listId: string): Promise<void> {
+  // First, update all saved quotes with this listId to remove the list reference
+  const savedQuotesRef = collection(db, 'users', uid, 'savedQuotes');
+  const q = query(savedQuotesRef, where('listId', '==', listId));
+  const snapshot = await getDocs(q);
+
+  const batch = writeBatch(db);
+  snapshot.docs.forEach((docSnap) => {
+    batch.update(docSnap.ref, { listId: null });
+  });
+  await batch.commit();
+
+  // Then delete the list itself
+  const listRef = doc(db, 'users', uid, 'lists', listId);
+  await deleteDoc(listRef);
+}
+
+export async function getUserLists(uid: string): Promise<ListData[]> {
+  const listsRef = collection(db, 'users', uid, 'lists');
+  const snapshot = await getDocs(listsRef);
+
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    name: doc.data().name,
+    createdAt: toDate(doc.data().createdAt),
+  }));
+}
+
+export async function renameList(uid: string, listId: string, newName: string): Promise<void> {
+  const listRef = doc(db, 'users', uid, 'lists', listId);
+  await updateDoc(listRef, { name: newName });
+}
+
+// ============ SAVED QUOTES WITH LISTS ============
+
+export async function saveQuoteToList(
+  uid: string,
+  quoteId: string,
+  listId: string | null
+): Promise<void> {
+  const savedQuoteRef = doc(db, 'users', uid, 'savedQuotes', quoteId);
+  await setDoc(savedQuoteRef, {
+    quoteId,
+    listId,
+    savedAt: Timestamp.now(),
+  });
+}
+
+export async function getQuotesInList(uid: string, listId: string | null): Promise<string[]> {
+  const savedQuotesRef = collection(db, 'users', uid, 'savedQuotes');
+  const q = listId === null
+    ? query(savedQuotesRef)
+    : query(savedQuotesRef, where('listId', '==', listId));
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((doc) => doc.data().quoteId);
+}
+
+export async function getSavedQuoteListId(uid: string, quoteId: string): Promise<string | null | undefined> {
+  const savedQuoteRef = doc(db, 'users', uid, 'savedQuotes', quoteId);
+  const snapshot = await getDoc(savedQuoteRef);
+
+  if (!snapshot.exists()) return undefined; // Not saved at all
+  return snapshot.data().listId; // null means saved without a list
+}

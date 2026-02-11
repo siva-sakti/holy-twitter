@@ -10,28 +10,30 @@ interface FigureProfileProps {
   figure: Figure;
   quotes: QuoteWithFigure[];
   savedQuoteIds: string[];
+  likedQuoteIds: string[];
   isFollowing: boolean;
   onBack: () => void;
   onToggleFollow: () => void;
-  onSave: (quoteId: string) => void;
-  onUnsave: (quoteId: string) => void;
+  onLike: (quoteId: string) => void;
+  onUnlike: (quoteId: string) => void;
+  onBookmark: (quoteId: string) => void;
   onExpand: (quote: QuoteWithFigure) => void;
   onShare: (quote: QuoteWithFigure) => void;
-  onRepost: (quote: QuoteWithFigure) => void;
 }
 
 export default function FigureProfile({
   figure,
   quotes,
   savedQuoteIds,
+  likedQuoteIds,
   isFollowing,
   onBack,
   onToggleFollow,
-  onSave,
-  onUnsave,
+  onLike,
+  onUnlike,
+  onBookmark,
   onExpand,
   onShare,
-  onRepost,
 }: FigureProfileProps) {
   const [showCompactHeader, setShowCompactHeader] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -173,17 +175,18 @@ export default function FigureProfile({
                 sourceCitation: quote.sourceCitation,
               }}
               timestamp={quote.fakeTimestamp}
-              isSaved={savedQuoteIds.includes(quote.id)}
-              onSave={() => {
-                if (savedQuoteIds.includes(quote.id)) {
-                  onUnsave(quote.id);
+              isLiked={likedQuoteIds.includes(quote.id)}
+              isBookmarked={savedQuoteIds.includes(quote.id)}
+              onLike={() => {
+                if (likedQuoteIds.includes(quote.id)) {
+                  onUnlike(quote.id);
                 } else {
-                  onSave(quote.id);
+                  onLike(quote.id);
                 }
               }}
+              onBookmark={() => onBookmark(quote.id)}
               onExpand={() => onExpand(quote)}
               onShare={() => onShare(quote)}
-              onRepost={() => onRepost(quote)}
             />
           ))
         )}

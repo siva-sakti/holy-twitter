@@ -14,14 +14,15 @@ interface UserProfileProps {
     bio: string;
   };
   savedQuoteIds: string[];
+  likedQuoteIds: string[];
   quotes: Quote[];
   figures: Figure[];
   onClose: () => void;
-  onSave: (quoteId: string) => void;
-  onUnsave: (quoteId: string) => void;
+  onLike: (quoteId: string) => void;
+  onUnlike: (quoteId: string) => void;
+  onBookmark: (quoteId: string) => void;
   onExpand: (quote: QuoteWithFigure) => void;
   onShare: (quote: QuoteWithFigure) => void;
-  onRepost: (quote: QuoteWithFigure) => void;
   onUpdateProfile?: (updates: { displayName?: string; bio?: string }) => Promise<void>;
 }
 
@@ -30,13 +31,14 @@ type TabType = 'saved' | 'added' | 'quoted';
 export default function UserProfile({
   user,
   savedQuoteIds,
+  likedQuoteIds,
   quotes,
   figures,
-  onSave,
-  onUnsave,
+  onLike,
+  onUnlike,
+  onBookmark,
   onExpand,
   onShare,
-  onRepost,
   onUpdateProfile,
 }: UserProfileProps) {
   const [activeTab, setActiveTab] = useState<TabType>('saved');
@@ -288,7 +290,7 @@ export default function UserProfile({
                   Save quotes for later
                 </h3>
                 <p className="text-[15px] text-[#536471] dark:text-[#71767b] max-w-[320px]">
-                  Tap the heart on any quote to save it here.
+                  Tap the bookmark icon on any quote to save it here.
                 </p>
               </div>
             ) : (
@@ -306,11 +308,18 @@ export default function UserProfile({
                       sourceCitation: quote.sourceCitation,
                     }}
                     timestamp={quote.fakeTimestamp}
-                    isSaved={true}
-                    onSave={() => onUnsave(quote.id)}
+                    isLiked={likedQuoteIds.includes(quote.id)}
+                    isBookmarked={true}
+                    onLike={() => {
+                      if (likedQuoteIds.includes(quote.id)) {
+                        onUnlike(quote.id);
+                      } else {
+                        onLike(quote.id);
+                      }
+                    }}
+                    onBookmark={() => onBookmark(quote.id)}
                     onExpand={() => onExpand(quote)}
                     onShare={() => onShare(quote)}
-                    onRepost={() => onRepost(quote)}
                   />
                 ))}
               </div>

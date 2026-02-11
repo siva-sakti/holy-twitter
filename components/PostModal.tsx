@@ -4,15 +4,16 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { FiShare } from 'react-icons/fi';
-import { IoArrowBack } from 'react-icons/io5';
+import { IoArrowBack, IoBookmarkOutline, IoBookmark } from 'react-icons/io5';
 import type { QuoteWithFigure } from '@/lib/types';
 
 interface PostModalProps {
   quote: QuoteWithFigure;
-  isSaved: boolean;
+  isLiked: boolean;
+  isBookmarked: boolean;
   onClose: () => void;
-  onSave: () => void;
-  onRepost: () => void;
+  onLike: () => void;
+  onBookmark: () => void;
   onShare: () => void;
 }
 
@@ -35,9 +36,11 @@ function formatFullTimestamp(): string {
 
 export default function PostModal({
   quote,
-  isSaved,
+  isLiked,
+  isBookmarked,
   onClose,
-  onSave,
+  onLike,
+  onBookmark,
   onShare,
 }: PostModalProps) {
   const router = useRouter();
@@ -134,22 +137,39 @@ export default function PostModal({
           </div>
         </div>
 
-        {/* Action buttons - minimal */}
+        {/* Action buttons - 3 buttons */}
         <div className="flex items-center justify-around px-4 py-3 border-t border-[#eff3f4] dark:border-[#2f3336] bg-white dark:bg-black">
-          {/* Save/Heart */}
+          {/* Like/Heart */}
           <button
-            onClick={onSave}
+            onClick={onLike}
             className="group flex items-center gap-1"
           >
-            <div className={`p-2 rounded-full transition-colors ${isSaved ? '' : 'group-hover:bg-[#f918801a]'}`}>
-              {isSaved ? (
+            <div className={`p-2 rounded-full transition-colors ${isLiked ? '' : 'group-hover:bg-[#f918801a]'}`}>
+              {isLiked ? (
                 <FaHeart className="w-5 h-5 text-[#f91880]" />
               ) : (
                 <FaRegHeart className="w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#f91880]" />
               )}
             </div>
-            <span className={`text-[13px] ${isSaved ? 'text-[#f91880]' : 'text-[#536471] dark:text-[#71767b] group-hover:text-[#f91880]'}`}>
-              {isSaved ? 'Saved' : 'Save'}
+            <span className={`text-[13px] ${isLiked ? 'text-[#f91880]' : 'text-[#536471] dark:text-[#71767b] group-hover:text-[#f91880]'}`}>
+              {isLiked ? 'Liked' : 'Like'}
+            </span>
+          </button>
+
+          {/* Bookmark */}
+          <button
+            onClick={onBookmark}
+            className="group flex items-center gap-1"
+          >
+            <div className={`p-2 rounded-full transition-colors ${isBookmarked ? '' : 'group-hover:bg-[#1d9bf01a]'}`}>
+              {isBookmarked ? (
+                <IoBookmark className="w-5 h-5 text-[#1d9bf0]" />
+              ) : (
+                <IoBookmarkOutline className="w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]" />
+              )}
+            </div>
+            <span className={`text-[13px] ${isBookmarked ? 'text-[#1d9bf0]' : 'text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]'}`}>
+              {isBookmarked ? 'Saved' : 'Save'}
             </span>
           </button>
 
@@ -158,10 +178,10 @@ export default function PostModal({
             onClick={onShare}
             className="group flex items-center gap-1"
           >
-            <div className="p-2 rounded-full group-hover:bg-[#1d9bf01a] transition-colors">
-              <FiShare className="w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]" />
+            <div className="p-2 rounded-full group-hover:bg-[#00ba7c1a] transition-colors">
+              <FiShare className="w-5 h-5 text-[#536471] dark:text-[#71767b] group-hover:text-[#00ba7c]" />
             </div>
-            <span className="text-[13px] text-[#536471] dark:text-[#71767b] group-hover:text-[#1d9bf0]">
+            <span className="text-[13px] text-[#536471] dark:text-[#71767b] group-hover:text-[#00ba7c]">
               Share
             </span>
           </button>
