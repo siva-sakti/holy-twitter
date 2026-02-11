@@ -67,7 +67,7 @@ export default function AboutPage() {
                 Hi, I'm <span className="font-semibold">Gargi Bala</span>, a child of the internet. I can't count the number of times my brain itches to scroll and my fingers reach for the timeline. It's probably a 1000x order of magnitude over the decade+ more than I've prayed.
               </p>
               <p>
-                Though I've succumbed to the act of scrolling, the content I saw always dissatisfied me. I want to contemplate spiritual teachings as much as I can in this life, and so I might as well use these optimized reward circuits for a better cause. Plus this feels way more like community to me :)
+                Though I've succumbed to the act of scrolling, the content I saw always dissatisfied me. I want to contemplate spiritual teachings as much as I can in this life, and so I might as well use these optimized reward circuits for a better cause. Plus this feels way more like community — and even home — to me. Hope you can find joy and a path toward peace through this, too :)
               </p>
             </div>
           </section>
