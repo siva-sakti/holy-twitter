@@ -16,6 +16,8 @@ import {
   IoLogOutOutline,
   IoEllipsisHorizontal,
   IoConstructOutline,
+  IoInformationCircleOutline,
+  IoAddCircleOutline,
 } from 'react-icons/io5';
 
 export type NavTab = 'home' | 'search' | 'bookmarks' | 'profile';
@@ -144,6 +146,22 @@ export default function Sidebar({
                       </>
                     )}
                   </button>
+                  <Link
+                    href="/suggest"
+                    onClick={() => setShowSettingsMenu(false)}
+                    className="flex items-center gap-3 w-full px-4 py-3 text-left text-[15px] text-[#0f1419] dark:text-[#e7e9ea] hover:bg-[#f7f9f9] dark:hover:bg-[#16181c] transition-colors"
+                  >
+                    <IoAddCircleOutline className="w-5 h-5" />
+                    Suggest a figure
+                  </Link>
+                  <Link
+                    href="/about"
+                    onClick={() => setShowSettingsMenu(false)}
+                    className="flex items-center gap-3 w-full px-4 py-3 text-left text-[15px] text-[#0f1419] dark:text-[#e7e9ea] hover:bg-[#f7f9f9] dark:hover:bg-[#16181c] transition-colors"
+                  >
+                    <IoInformationCircleOutline className="w-5 h-5" />
+                    About
+                  </Link>
                   <Link
                     href="/admin"
                     onClick={() => setShowSettingsMenu(false)}
