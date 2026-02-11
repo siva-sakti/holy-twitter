@@ -26,16 +26,24 @@ export default function LoginScreen() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-black px-6">
       <div className="w-full max-w-[364px] flex flex-col items-center">
         {/* Logo */}
-        <div className="mb-8">
-          <span className="text-[42px]">✦</span>
+        <div className="mb-6 text-center">
+          <h1
+            className="text-[42px] font-semibold text-[#0f1419] dark:text-[#e7e9ea] tracking-tight"
+            style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}
+          >
+            Holy Scroll <span className="text-[#d4af37]">✦</span>
+          </h1>
+          <p
+            className="mt-2 text-[15px] text-[#536471] dark:text-[#71767b] italic"
+            style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}
+          >
+            Instead of doomscrolling, holy scroll.
+          </p>
         </div>
 
-        {/* Title */}
-        <h1 className="text-[31px] font-bold text-[#0f1419] dark:text-[#e7e9ea] tracking-tight leading-9 text-center">
-          Happening now
-        </h1>
-        <p className="mt-2 text-[15px] text-[#536471] dark:text-[#71767b] text-center">
-          Join HolyScroll today.
+        {/* Subtitle */}
+        <p className="mt-4 text-[15px] text-[#536471] dark:text-[#71767b] text-center">
+          Join today.
         </p>
 
         {/* Sign in section */}

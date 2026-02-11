@@ -72,19 +72,9 @@ export default function AppShell({
           </div>
         </main>
 
-        {/* Right Sidebar - hidden on smaller screens, optional content */}
+        {/* Right Sidebar - hidden on smaller screens */}
         <aside className="hidden lg:block w-[350px] flex-shrink-0 p-4">
           {/* Empty for now - could add search, trends, suggestions */}
-          <div className="sticky top-4">
-            <div className="rounded-2xl bg-[#f7f9f9] dark:bg-[#16181c] p-4">
-              <h2 className="text-[20px] font-bold text-[#0f1419] dark:text-[#e7e9ea] mb-2">
-                Welcome to HolyScroll
-              </h2>
-              <p className="text-[15px] text-[#536471] dark:text-[#71767b] leading-5">
-                A feed of wisdom from saints, mystics, and sacred texts. No likes, no followers, no noise — just timeless truth.
-              </p>
-            </div>
-          </div>
         </aside>
       </div>
 
