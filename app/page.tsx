@@ -112,27 +112,50 @@ export default function Home() {
     }
   }, [user]);
 
+  // Track in-progress saves to prevent double-clicks
+  const [savingQuoteIds, setSavingQuoteIds] = useState<Set<string>>(new Set());
+
   // Handle save quote
   const handleSave = async (quoteId: string) => {
     if (!user) return;
+    // Prevent duplicate saves
+    if (savedQuoteIds.includes(quoteId) || savingQuoteIds.has(quoteId)) return;
 
+    setSavingQuoteIds((prev) => new Set(prev).add(quoteId));
     try {
       await saveQuote(user.uid, quoteId);
-      setSavedQuoteIds((prev) => [...prev, quoteId]);
+      setSavedQuoteIds((prev) =>
+        prev.includes(quoteId) ? prev : [...prev, quoteId]
+      );
     } catch (err) {
       console.error('Error saving quote:', err);
+    } finally {
+      setSavingQuoteIds((prev) => {
+        const next = new Set(prev);
+        next.delete(quoteId);
+        return next;
+      });
     }
   };
 
   // Handle unsave quote
   const handleUnsave = async (quoteId: string) => {
     if (!user) return;
+    // Prevent duplicate unsaves
+    if (!savedQuoteIds.includes(quoteId) || savingQuoteIds.has(quoteId)) return;
 
+    setSavingQuoteIds((prev) => new Set(prev).add(quoteId));
     try {
       await unsaveQuote(user.uid, quoteId);
       setSavedQuoteIds((prev) => prev.filter((id) => id !== quoteId));
     } catch (err) {
       console.error('Error unsaving quote:', err);
+    } finally {
+      setSavingQuoteIds((prev) => {
+        const next = new Set(prev);
+        next.delete(quoteId);
+        return next;
+      });
     }
   };
 

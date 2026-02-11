@@ -394,3 +394,6 @@ All major decisions made. Ready to build.
 - **Configuration**: Added `vercel.json` to explicitly set Next.js framework preset
 - **Security**: Added admin email allowlist to restrict `/admin` dashboard access (only authorized emails can access)
 - **Infrastructure**: Firebase environment variables configured in Vercel for production deployment
+- **Bug Fix**: Fixed duplicate save bug when rapidly clicking favorite button (added save-in-progress tracking)
+- **Bug Fix**: Added guards to prevent race conditions on save/unsave operations
+- **UI**: Moved action buttons (heart, share) to right side of posts for better aesthetics
