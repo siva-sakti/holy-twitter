@@ -29,19 +29,19 @@ export default function AboutPage() {
           {/* Tagline */}
           <div className="text-center pb-6 border-b border-[#eff3f4] dark:border-[#2f3336]">
             <h2
-              className="text-[32px] font-semibold text-[#0f1419] dark:text-[#e7e9ea] tracking-tight mb-4"
+              className="text-[32px] font-semibold text-[#0f1419] dark:text-[#e7e9ea] tracking-tight mb-3"
               style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}
             >
               Holy Scroll <span className="text-[#d4af37]">✦</span>
             </h2>
-            <p className="text-[20px] font-medium text-[#0f1419] dark:text-[#e7e9ea] mb-2">
+            <p className="text-[18px] font-medium text-[#0f1419] dark:text-[#e7e9ea] mb-2">
               Can't stop scrolling?
             </p>
             <p
-              className="text-[17px] text-[#536471] dark:text-[#71767b] italic"
+              className="text-[22px] text-[#0f1419] dark:text-[#e7e9ea] italic"
               style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}
             >
-              Make it sacred.
+              At least make it sacred.
             </p>
           </div>
 
@@ -50,15 +50,9 @@ export default function AboutPage() {
             <h2 className="text-[18px] font-bold text-[#0f1419] dark:text-[#e7e9ea] flex items-center gap-2">
               <span className="text-[#d4af37]">✦</span> The Why
             </h2>
-            <div className="text-[15px] text-[#0f1419] dark:text-[#e7e9ea] leading-relaxed space-y-4">
+            <div className="text-[15px] text-[#0f1419] dark:text-[#e7e9ea] leading-relaxed">
               <p>
-                Look, there's something deeply satisfying about scrolling. Especially when you've been raised on the internet and even in your best moments, your fingers still itch to open Twitter.
-              </p>
-              <p>
-                So I built this. You still get the scroll. You still get the feed. But instead of rage bait and hot takes, you get words that have actually survived centuries.
-              </p>
-              <p>
-                Honestly, these feel more like my real friends than my actual social media. At least they don't subtoot.
+                Scrolling — we all love it, whether we want to or not. Maybe one day we'll all make it off the internet, but until then... we might as well make our habit into something more holy.
               </p>
             </div>
           </section>
