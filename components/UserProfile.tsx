@@ -26,7 +26,7 @@ interface UserProfileProps {
   onUpdateProfile?: (updates: { displayName?: string; bio?: string }) => Promise<void>;
 }
 
-type TabType = 'saved' | 'added' | 'quoted';
+type TabType = 'favorites' | 'added' | 'quoted';
 
 export default function UserProfile({
   user,
@@ -41,7 +41,7 @@ export default function UserProfile({
   onShare,
   onUpdateProfile,
 }: UserProfileProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('saved');
+  const [activeTab, setActiveTab] = useState<TabType>('favorites');
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(user.displayName);
   const [editBio, setEditBio] = useState(user.bio || '');
@@ -102,9 +102,9 @@ export default function UserProfile({
     [figures]
   );
 
-  // Get saved quotes with figure data
-  const savedQuotes = useMemo(() => {
-    return savedQuoteIds
+  // Get favorited (liked) quotes with figure data
+  const favoritedQuotes = useMemo(() => {
+    return likedQuoteIds
       .map((quoteId) => {
         const quote = quotes.find((q) => q.id === quoteId);
         if (!quote) return null;
@@ -117,10 +117,10 @@ export default function UserProfile({
         } as QuoteWithFigure;
       })
       .filter((q): q is QuoteWithFigure => q !== null);
-  }, [savedQuoteIds, quotes, figureMap]);
+  }, [likedQuoteIds, quotes, figureMap]);
 
   const tabs: { id: TabType; label: string }[] = [
-    { id: 'saved', label: 'Saved' },
+    { id: 'favorites', label: 'Favorites' },
     { id: 'added', label: 'Added' },
     { id: 'quoted', label: 'Quoted' },
   ];
@@ -282,20 +282,20 @@ export default function UserProfile({
 
       {/* Tab Content */}
       <div>
-        {activeTab === 'saved' && (
+        {activeTab === 'favorites' && (
           <>
-            {savedQuotes.length === 0 ? (
+            {favoritedQuotes.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
                 <h3 className="text-[31px] font-extrabold text-[#0f1419] dark:text-[#e7e9ea] mb-2">
-                  Save quotes for later
+                  No favorites yet
                 </h3>
                 <p className="text-[15px] text-[#536471] dark:text-[#71767b] max-w-[320px]">
-                  Tap the bookmark icon on any quote to save it here.
+                  Tap the heart on any quote to add it to your favorites.
                 </p>
               </div>
             ) : (
               <div>
-                {savedQuotes.map((quote) => (
+                {favoritedQuotes.map((quote) => (
                   <Post
                     key={quote.id}
                     figure={{
@@ -308,15 +308,9 @@ export default function UserProfile({
                       sourceCitation: quote.sourceCitation,
                     }}
                     timestamp={quote.fakeTimestamp}
-                    isLiked={likedQuoteIds.includes(quote.id)}
-                    isBookmarked={true}
-                    onLike={() => {
-                      if (likedQuoteIds.includes(quote.id)) {
-                        onUnlike(quote.id);
-                      } else {
-                        onLike(quote.id);
-                      }
-                    }}
+                    isLiked={true}
+                    isBookmarked={savedQuoteIds.includes(quote.id)}
+                    onLike={() => onUnlike(quote.id)}
                     onBookmark={() => onBookmark(quote.id)}
                     onExpand={() => onExpand(quote)}
                     onShare={() => onShare(quote)}

@@ -58,7 +58,7 @@ export default function Sidebar({
     },
     {
       id: 'bookmarks',
-      label: 'Saved',
+      label: 'Bookmarks',
       icon: <IoBookmarkOutline className="w-[26px] h-[26px]" />,
       activeIcon: <IoBookmark className="w-[26px] h-[26px]" />,
     },
