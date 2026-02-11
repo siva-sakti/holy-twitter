@@ -28,6 +28,9 @@ export default function AboutPage() {
         <div className="px-6 py-8 space-y-8">
           {/* Tagline */}
           <div className="text-center pb-6 border-b border-[#eff3f4] dark:border-[#2f3336]">
+            <p className="text-[15px] text-[#536471] dark:text-[#71767b] italic mb-3">
+              Instead of doomscrolling, holy scroll.
+            </p>
             <p className="text-[24px] font-bold text-[#0f1419] dark:text-[#e7e9ea] mb-2">
               Can't stop scrolling?
             </p>
