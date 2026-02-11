@@ -110,6 +110,19 @@ export default function Sidebar({
             </li>
           ))}
 
+          {/* Suggest */}
+          <li>
+            <Link
+              href="/suggest"
+              className="flex items-center gap-4 p-3 rounded-full hover:bg-[#0f14190a] dark:hover:bg-[#eff3f41a] transition-colors w-full"
+            >
+              <IoAddCircleOutline className="w-[26px] h-[26px] text-[#0f1419] dark:text-[#e7e9ea]" />
+              <span className="hidden xl:block text-[20px] text-[#0f1419] dark:text-[#e7e9ea]">
+                Suggest
+              </span>
+            </Link>
+          </li>
+
           {/* About */}
           <li>
             <Link
@@ -162,14 +175,6 @@ export default function Sidebar({
                       </>
                     )}
                   </button>
-                  <Link
-                    href="/suggest"
-                    onClick={() => setShowSettingsMenu(false)}
-                    className="flex items-center gap-3 w-full px-4 py-3 text-left text-[15px] text-[#0f1419] dark:text-[#e7e9ea] hover:bg-[#f7f9f9] dark:hover:bg-[#16181c] transition-colors"
-                  >
-                    <IoAddCircleOutline className="w-5 h-5" />
-                    Suggest a figure
-                  </Link>
                   <Link
                     href="/admin"
                     onClick={() => setShowSettingsMenu(false)}
