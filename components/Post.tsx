@@ -113,8 +113,8 @@ export default function Post({
           )}
         </div>
 
-        {/* Action Buttons - minimal, just save and share, aligned right */}
-        <div className="action-buttons flex items-center justify-end gap-0 mt-3 -mr-2">
+        {/* Action Buttons - heart left, share right, spread across */}
+        <div className="action-buttons flex items-center justify-between mt-3 -mx-2">
           {/* Save/Heart */}
           <button
             className="group flex items-center"
