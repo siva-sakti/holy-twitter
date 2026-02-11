@@ -130,6 +130,7 @@ export async function createUserIfNotExists(
     bio: '',
     profilePicUrl: photoURL || '',
     following: [],
+    hasSeenTutorial: false,
     createdAt: new Date(),
   };
 
@@ -169,6 +170,11 @@ export async function updateUserProfile(
 ): Promise<void> {
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, updates);
+}
+
+export async function markTutorialSeen(uid: string): Promise<void> {
+  const userRef = doc(db, 'users', uid);
+  await updateDoc(userRef, { hasSeenTutorial: true });
 }
 
 // ============ SAVED QUOTES ============

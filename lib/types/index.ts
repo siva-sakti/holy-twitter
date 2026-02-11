@@ -29,6 +29,7 @@ export interface User {
   bio: string; // User's bio/description
   profilePicUrl: string;
   following: string[]; // figureIds
+  hasSeenTutorial?: boolean; // Whether user has seen the onboarding tutorial
   createdAt: Date;
 }
 

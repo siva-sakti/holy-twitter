@@ -11,6 +11,7 @@ interface AppShellProps {
   userPhotoUrl?: string;
   userName?: string;
   onSignOut: () => void;
+  onShowTutorial?: () => void;
 }
 
 export default function AppShell({
@@ -20,6 +21,7 @@ export default function AppShell({
   userPhotoUrl,
   userName,
   onSignOut,
+  onShowTutorial,
 }: AppShellProps) {
   const { isDark, toggleTheme } = useTheme();
 
@@ -37,6 +39,7 @@ export default function AppShell({
             isDark={isDark}
             onToggleTheme={toggleTheme}
             onSignOut={onSignOut}
+            onShowTutorial={onShowTutorial}
           />
         </aside>
 

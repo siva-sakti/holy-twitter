@@ -11,6 +11,7 @@ import UserProfile from '@/components/UserProfile';
 import SavedQuotes from '@/components/SavedQuotes';
 import ListPickerModal from '@/components/ListPickerModal';
 import CreateListModal from '@/components/CreateListModal';
+import TutorialModal from '@/components/TutorialModal';
 import { shareQuote as shareQuoteUtil } from '@/lib/utils/share';
 import {
   getFigures,
@@ -28,6 +29,7 @@ import {
   deleteList,
   updateUserFollowing,
   updateUserProfile,
+  markTutorialSeen,
 } from '@/lib/firebase/firestore';
 import type { ListData } from '@/lib/firebase/firestore';
 import type { Figure, Quote, User, QuoteWithFigure } from '@/lib/types';
@@ -65,6 +67,7 @@ export default function Home() {
   // Modal state
   const [bookmarkingQuoteId, setBookmarkingQuoteId] = useState<string | null>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Derived: array of saved quote IDs for quick lookup
   const savedQuoteIds = savedQuotes.map((sq) => sq.quoteId);
@@ -138,12 +141,31 @@ export default function Home() {
       if (updatedUserData) {
         setUserData(updatedUserData);
         await loadFeedData(user.uid, updatedUserData.following);
+        // Show tutorial for new users who haven't seen it
+        if (!updatedUserData.hasSeenTutorial) {
+          setShowTutorial(true);
+        }
       }
     } catch (err) {
       console.error('Error after onboarding:', err);
       setDataLoading(false);
     }
   }, [user]);
+
+  // Handle tutorial complete
+  const handleTutorialComplete = useCallback(async () => {
+    setShowTutorial(false);
+    if (user) {
+      try {
+        await markTutorialSeen(user.uid);
+        if (userData) {
+          setUserData({ ...userData, hasSeenTutorial: true });
+        }
+      } catch (err) {
+        console.error('Error marking tutorial as seen:', err);
+      }
+    }
+  }, [user, userData]);
 
   // ============ LIKE HANDLERS ============
 
@@ -427,6 +449,7 @@ export default function Home() {
           userPhotoUrl={user?.photoURL || undefined}
           userName={userData?.displayName || user?.displayName || 'User'}
           onSignOut={handleSignOut}
+          onShowTutorial={() => setShowTutorial(true)}
         >
           {renderContent()}
         </AppShell>
@@ -470,6 +493,11 @@ export default function Home() {
             onClose={() => setShowCreateListModal(false)}
             onCreate={handleCreateList}
           />
+        )}
+
+        {/* Tutorial Modal */}
+        {showTutorial && (
+          <TutorialModal onComplete={handleTutorialComplete} />
         )}
       </>
     );

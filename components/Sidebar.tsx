@@ -19,6 +19,7 @@ import {
   IoConstructOutline,
   IoInformationCircleOutline,
   IoAddCircleOutline,
+  IoHelpCircleOutline,
 } from 'react-icons/io5';
 
 export type NavTab = 'home' | 'search' | 'bookmarks' | 'profile';
@@ -31,6 +32,7 @@ interface SidebarProps {
   isDark: boolean;
   onToggleTheme: () => void;
   onSignOut: () => void;
+  onShowTutorial?: () => void;
 }
 
 export default function Sidebar({
@@ -41,6 +43,7 @@ export default function Sidebar({
   isDark,
   onToggleTheme,
   onSignOut,
+  onShowTutorial,
 }: SidebarProps) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -175,6 +178,18 @@ export default function Sidebar({
                       </>
                     )}
                   </button>
+                  {onShowTutorial && (
+                    <button
+                      onClick={() => {
+                        onShowTutorial();
+                        setShowSettingsMenu(false);
+                      }}
+                      className="flex items-center gap-3 w-full px-4 py-3 text-left text-[15px] text-[#0f1419] dark:text-[#e7e9ea] hover:bg-[#f7f9f9] dark:hover:bg-[#16181c] transition-colors"
+                    >
+                      <IoHelpCircleOutline className="w-5 h-5" />
+                      How to use
+                    </button>
+                  )}
                   <Link
                     href="/admin"
                     onClick={() => setShowSettingsMenu(false)}
