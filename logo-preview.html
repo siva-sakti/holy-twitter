@@ -2,6 +2,9 @@
 <html>
 <head>
   <title>Holy Scroll Logo Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&family=DM+Serif+Display&family=Crimson+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -9,14 +12,15 @@
       flex-direction: column;
       align-items: center;
       padding: 40px;
-      gap: 40px;
+      gap: 24px;
     }
     .preview {
       display: flex;
-      align-items: center;
-      gap: 40px;
-      padding: 40px;
+      flex-direction: column;
+      gap: 24px;
+      padding: 40px 60px;
       border-radius: 16px;
+      min-width: 400px;
     }
     .light { background: #fff; }
     .dark { background: #000; }
@@ -26,58 +30,91 @@
       margin-bottom: 8px;
     }
     h1 { margin-bottom: 0; }
-    h3 { color: #666; margin-top: 40px; }
-    .sizes { display: flex; gap: 24px; align-items: end; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .logo-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .font-label {
+      font-size: 10px;
+      color: #999;
+    }
+    .tagline {
+      font-size: 11px;
+      color: #536471;
+      margin-top: 2px;
+    }
+    .tagline-dark {
+      color: #71767b;
+    }
+
+    /* Logo styles */
+    .logo-text {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .playfair { font-family: 'Playfair Display', serif; }
+    .cormorant { font-family: 'Cormorant Garamond', serif; }
+    .baskerville { font-family: 'Libre Baskerville', serif; }
+    .dm-serif { font-family: 'DM Serif Display', serif; }
+    .crimson { font-family: 'Crimson Pro', serif; }
+
+    .light-text { color: #0f1419; }
+    .dark-text { color: #e7e9ea; }
+    .gold { color: #d4af37; }
+
+    .size-sm { font-size: 20px; }
+    .size-md { font-size: 28px; }
+    .size-lg { font-size: 36px; }
   </style>
 </head>
 <body>
-  <h1>Holy Scroll Logo Preview</h1>
+  <h1>Holy Scroll - Typography Logos</h1>
+  <p style="color: #666;">Clean text-based options</p>
 
-  <h3>New Design - Angled, Twitter-style</h3>
+  <!-- MONOGRAM OPTIONS -->
+  <h3 style="color: #666; margin-top: 20px;">Monogram "HS"</h3>
 
   <div>
     <div class="label">Light Mode</div>
     <div class="preview light">
-      <div class="sizes">
-        <!-- 24px -->
-        <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-12 16 16)">
-            <!-- Main scroll body - flowing curve -->
-            <path d="M7 8C7 5.5 9 4 11 4H21C24 4 25 6 25 8V22C25 25 23 27 20 27H12C9 27 7 25 7 22V8Z" fill="#0f1419"/>
-            <!-- Top curl - smooth -->
-            <ellipse cx="8" cy="7" rx="3" ry="3.5" fill="#0f1419"/>
-            <!-- Bottom curl - smooth -->
-            <ellipse cx="24" cy="25" rx="3" ry="3.5" fill="#0f1419"/>
-            <!-- Gold lines -->
-            <rect x="10" y="10" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="14" width="8" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="18" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
-
-        <!-- 32px -->
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-12 16 16)">
-            <path d="M7 8C7 5.5 9 4 11 4H21C24 4 25 6 25 8V22C25 25 23 27 20 27H12C9 27 7 25 7 22V8Z" fill="#0f1419"/>
-            <ellipse cx="8" cy="7" rx="3" ry="3.5" fill="#0f1419"/>
-            <ellipse cx="24" cy="25" rx="3" ry="3.5" fill="#0f1419"/>
-            <rect x="10" y="10" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="14" width="8" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="18" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
-
-        <!-- 48px -->
-        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-12 16 16)">
-            <path d="M7 8C7 5.5 9 4 11 4H21C24 4 25 6 25 8V22C25 25 23 27 20 27H12C9 27 7 25 7 22V8Z" fill="#0f1419"/>
-            <ellipse cx="8" cy="7" rx="3" ry="3.5" fill="#0f1419"/>
-            <ellipse cx="24" cy="25" rx="3" ry="3.5" fill="#0f1419"/>
-            <rect x="10" y="10" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="14" width="8" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="18" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
+      <div class="row">
+        <div class="logo-option">
+          <span class="logo-text playfair size-lg light-text">HS</span>
+          <span class="font-label">Playfair Display</span>
+        </div>
+        <div class="logo-option">
+          <span class="logo-text cormorant size-lg light-text">HS</span>
+          <span class="font-label">Cormorant Garamond</span>
+        </div>
+        <div class="logo-option">
+          <span class="logo-text dm-serif size-lg light-text">HS</span>
+          <span class="font-label">DM Serif Display</span>
+        </div>
+        <div class="logo-option">
+          <span class="logo-text crimson size-lg light-text">HS</span>
+          <span class="font-label">Crimson Pro</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="logo-option">
+          <span class="logo-text playfair size-lg gold">HS</span>
+          <span class="font-label">Playfair + Gold</span>
+        </div>
+        <div class="logo-option">
+          <span class="logo-text cormorant size-lg gold">HS</span>
+          <span class="font-label">Cormorant + Gold</span>
+        </div>
+        <div class="logo-option">
+          <span class="logo-text dm-serif size-lg gold">HS</span>
+          <span class="font-label">DM Serif + Gold</span>
+        </div>
       </div>
     </div>
   </div>
@@ -85,83 +122,47 @@
   <div>
     <div class="label">Dark Mode</div>
     <div class="preview dark">
-      <div class="sizes">
-        <!-- 24px -->
-        <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-12 16 16)">
-            <path d="M7 8C7 5.5 9 4 11 4H21C24 4 25 6 25 8V22C25 25 23 27 20 27H12C9 27 7 25 7 22V8Z" fill="#e7e9ea"/>
-            <ellipse cx="8" cy="7" rx="3" ry="3.5" fill="#e7e9ea"/>
-            <ellipse cx="24" cy="25" rx="3" ry="3.5" fill="#e7e9ea"/>
-            <rect x="10" y="10" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="14" width="8" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="18" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
-
-        <!-- 32px -->
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-12 16 16)">
-            <path d="M7 8C7 5.5 9 4 11 4H21C24 4 25 6 25 8V22C25 25 23 27 20 27H12C9 27 7 25 7 22V8Z" fill="#e7e9ea"/>
-            <ellipse cx="8" cy="7" rx="3" ry="3.5" fill="#e7e9ea"/>
-            <ellipse cx="24" cy="25" rx="3" ry="3.5" fill="#e7e9ea"/>
-            <rect x="10" y="10" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="14" width="8" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="18" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
-
-        <!-- 48px -->
-        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-12 16 16)">
-            <path d="M7 8C7 5.5 9 4 11 4H21C24 4 25 6 25 8V22C25 25 23 27 20 27H12C9 27 7 25 7 22V8Z" fill="#e7e9ea"/>
-            <ellipse cx="8" cy="7" rx="3" ry="3.5" fill="#e7e9ea"/>
-            <ellipse cx="24" cy="25" rx="3" ry="3.5" fill="#e7e9ea"/>
-            <rect x="10" y="10" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="14" width="8" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="18" width="11" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
+      <div class="row">
+        <div class="logo-option">
+          <span class="logo-text playfair size-lg dark-text">HS</span>
+          <span class="font-label" style="color:#666">Playfair Display</span>
+        </div>
+        <div class="logo-option">
+          <span class="logo-text cormorant size-lg dark-text">HS</span>
+          <span class="font-label" style="color:#666">Cormorant Garamond</span>
+        </div>
+        <div class="logo-option">
+          <span class="logo-text dm-serif size-lg dark-text">HS</span>
+          <span class="font-label" style="color:#666">DM Serif Display</span>
+        </div>
+        <div class="logo-option">
+          <span class="logo-text playfair size-lg gold">HS</span>
+          <span class="font-label" style="color:#666">Playfair + Gold</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <h3>Alt: More Fluid/Curved (Twitter-bird-like)</h3>
+  <!-- FULL NAME OPTIONS -->
+  <h3 style="color: #666; margin-top: 20px;">Full "Holy Scroll"</h3>
 
   <div>
     <div class="label">Light Mode</div>
     <div class="preview light">
-      <div class="sizes">
-        <!-- 32px - More organic curved scroll -->
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-15 16 16)">
-            <!-- Fluid scroll shape -->
-            <path d="M8 6C8 4 10 3 12 3C14 3 22 3 23 3C25 3 26 5 26 7V24C26 26 24 28 22 28C20 28 12 28 10 28C8 28 6 26 6 24C6 22 6 10 6 8C6 6 7 5 8 6Z" fill="#0f1419"/>
-            <!-- Top curl - organic -->
-            <path d="M6 8C4 8 3 6 4 4C5 2 8 2 10 3C8 3 6 5 6 8Z" fill="#0f1419"/>
-            <circle cx="5" cy="5" r="2.5" fill="#0f1419"/>
-            <!-- Bottom curl - organic -->
-            <path d="M26 24C28 24 29 26 28 28C27 30 24 30 22 29C24 29 26 27 26 24Z" fill="#0f1419"/>
-            <circle cx="27" cy="27" r="2.5" fill="#0f1419"/>
-            <!-- Gold accent lines -->
-            <rect x="10" y="9" width="10" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="13" width="7" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="17" width="10" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
-
-        <!-- 48px -->
-        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-15 16 16)">
-            <path d="M8 6C8 4 10 3 12 3C14 3 22 3 23 3C25 3 26 5 26 7V24C26 26 24 28 22 28C20 28 12 28 10 28C8 28 6 26 6 24C6 22 6 10 6 8C6 6 7 5 8 6Z" fill="#0f1419"/>
-            <path d="M6 8C4 8 3 6 4 4C5 2 8 2 10 3C8 3 6 5 6 8Z" fill="#0f1419"/>
-            <circle cx="5" cy="5" r="2.5" fill="#0f1419"/>
-            <path d="M26 24C28 24 29 26 28 28C27 30 24 30 22 29C24 29 26 27 26 24Z" fill="#0f1419"/>
-            <circle cx="27" cy="27" r="2.5" fill="#0f1419"/>
-            <rect x="10" y="9" width="10" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="13" width="7" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="17" width="10" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
+      <div class="logo-option" style="align-items: flex-start;">
+        <span class="logo-text playfair size-md light-text">Holy Scroll</span>
+        <span class="tagline">Instead of doomscrolling, holy scroll.</span>
+        <span class="font-label" style="margin-top: 8px;">Playfair Display</span>
+      </div>
+      <div class="logo-option" style="align-items: flex-start;">
+        <span class="logo-text cormorant size-md light-text" style="font-size: 32px;">Holy Scroll</span>
+        <span class="tagline">Instead of doomscrolling, holy scroll.</span>
+        <span class="font-label" style="margin-top: 8px;">Cormorant Garamond</span>
+      </div>
+      <div class="logo-option" style="align-items: flex-start;">
+        <span class="logo-text dm-serif size-md light-text">Holy Scroll</span>
+        <span class="tagline">Instead of doomscrolling, holy scroll.</span>
+        <span class="font-label" style="margin-top: 8px;">DM Serif Display</span>
       </div>
     </div>
   </div>
@@ -169,34 +170,82 @@
   <div>
     <div class="label">Dark Mode</div>
     <div class="preview dark">
-      <div class="sizes">
-        <!-- 32px -->
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-15 16 16)">
-            <path d="M8 6C8 4 10 3 12 3C14 3 22 3 23 3C25 3 26 5 26 7V24C26 26 24 28 22 28C20 28 12 28 10 28C8 28 6 26 6 24C6 22 6 10 6 8C6 6 7 5 8 6Z" fill="#e7e9ea"/>
-            <path d="M6 8C4 8 3 6 4 4C5 2 8 2 10 3C8 3 6 5 6 8Z" fill="#e7e9ea"/>
-            <circle cx="5" cy="5" r="2.5" fill="#e7e9ea"/>
-            <path d="M26 24C28 24 29 26 28 28C27 30 24 30 22 29C24 29 26 27 26 24Z" fill="#e7e9ea"/>
-            <circle cx="27" cy="27" r="2.5" fill="#e7e9ea"/>
-            <rect x="10" y="9" width="10" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="13" width="7" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="17" width="10" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
+      <div class="logo-option" style="align-items: flex-start;">
+        <span class="logo-text playfair size-md dark-text">Holy Scroll</span>
+        <span class="tagline tagline-dark">Instead of doomscrolling, holy scroll.</span>
+        <span class="font-label" style="margin-top: 8px; color: #666;">Playfair Display</span>
+      </div>
+      <div class="logo-option" style="align-items: flex-start;">
+        <span class="logo-text cormorant size-md dark-text" style="font-size: 32px;">Holy Scroll</span>
+        <span class="tagline tagline-dark">Instead of doomscrolling, holy scroll.</span>
+        <span class="font-label" style="margin-top: 8px; color: #666;">Cormorant Garamond</span>
+      </div>
+      <div class="logo-option" style="align-items: flex-start;">
+        <span class="logo-text dm-serif size-md dark-text">Holy Scroll</span>
+        <span class="tagline tagline-dark">Instead of doomscrolling, holy scroll.</span>
+        <span class="font-label" style="margin-top: 8px; color: #666;">DM Serif Display</span>
+      </div>
+    </div>
+  </div>
 
-        <!-- 48px -->
-        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-15 16 16)">
-            <path d="M8 6C8 4 10 3 12 3C14 3 22 3 23 3C25 3 26 5 26 7V24C26 26 24 28 22 28C20 28 12 28 10 28C8 28 6 26 6 24C6 22 6 10 6 8C6 6 7 5 8 6Z" fill="#e7e9ea"/>
-            <path d="M6 8C4 8 3 6 4 4C5 2 8 2 10 3C8 3 6 5 6 8Z" fill="#e7e9ea"/>
-            <circle cx="5" cy="5" r="2.5" fill="#e7e9ea"/>
-            <path d="M26 24C28 24 29 26 28 28C27 30 24 30 22 29C24 29 26 27 26 24Z" fill="#e7e9ea"/>
-            <circle cx="27" cy="27" r="2.5" fill="#e7e9ea"/>
-            <rect x="10" y="9" width="10" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="13" width="7" height="1.5" rx="0.75" fill="#d4af37"/>
-            <rect x="10" y="17" width="10" height="1.5" rx="0.75" fill="#d4af37"/>
-          </g>
-        </svg>
+  <!-- WITH GOLD ACCENT -->
+  <h3 style="color: #666; margin-top: 20px;">With Gold Star Accent ✦</h3>
+
+  <div>
+    <div class="label">Light Mode</div>
+    <div class="preview light">
+      <div class="row" style="gap: 48px;">
+        <div class="logo-option">
+          <span class="logo-text playfair size-lg light-text">H<span class="gold">✦</span>S</span>
+          <span class="font-label">Monogram + star</span>
+        </div>
+        <div class="logo-option" style="align-items: flex-start;">
+          <span class="logo-text playfair size-md light-text">Holy Scroll <span class="gold">✦</span></span>
+          <span class="font-label" style="margin-top: 4px;">Full name + star</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Dark Mode</div>
+    <div class="preview dark">
+      <div class="row" style="gap: 48px;">
+        <div class="logo-option">
+          <span class="logo-text playfair size-lg dark-text">H<span class="gold">✦</span>S</span>
+          <span class="font-label" style="color:#666">Monogram + star</span>
+        </div>
+        <div class="logo-option" style="align-items: flex-start;">
+          <span class="logo-text playfair size-md dark-text">Holy Scroll <span class="gold">✦</span></span>
+          <span class="font-label" style="margin-top: 4px; color:#666">Full name + star</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPACT FOR SIDEBAR -->
+  <h3 style="color: #666; margin-top: 20px;">Sidebar Size (how it would look)</h3>
+
+  <div>
+    <div class="label">Light Mode - Sidebar mockup</div>
+    <div class="preview light" style="padding: 20px; min-width: 80px; max-width: 250px;">
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="padding: 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 12px;">
+          <span class="logo-text playfair light-text" style="font-size: 24px;">HS</span>
+          <span class="light-text" style="font-size: 11px; color: #536471;">Instead of doomscrolling,<br/>holy scroll.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Dark Mode - Sidebar mockup</div>
+    <div class="preview dark" style="padding: 20px; min-width: 80px; max-width: 250px;">
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="padding: 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 12px;">
+          <span class="logo-text playfair dark-text" style="font-size: 24px;">HS</span>
+          <span style="font-size: 11px; color: #71767b;">Instead of doomscrolling,<br/>holy scroll.</span>
+        </div>
       </div>
     </div>
   </div>

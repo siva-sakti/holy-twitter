@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Logo from './Logo';
 import {
   IoHomeOutline,
   IoHome,
@@ -75,12 +76,14 @@ export default function Sidebar({
   return (
     <div className="h-screen sticky top-0 flex flex-col justify-between py-3 px-2 xl:px-3">
       {/* Logo */}
-      <div className="mb-2">
-        <button className="p-3 rounded-full hover:bg-[#0f14190a] dark:hover:bg-[#eff3f41a] transition-colors">
-          <span className="text-[24px] font-bold text-[#0f1419] dark:text-[#e7e9ea]">
-            HS
-          </span>
-        </button>
+      <div className="mb-4 px-3">
+        <Logo size="sm" showTagline className="hidden xl:flex" />
+        <span
+          className="xl:hidden text-[24px] font-semibold text-[#0f1419] dark:text-[#e7e9ea]"
+          style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}
+        >
+          HS <span className="text-[#d4af37]">✦</span>
+        </span>
       </div>
 
       {/* Navigation */}
